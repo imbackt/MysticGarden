@@ -23,9 +23,8 @@ public class MysticGarden extends Game {
     private FitViewport screenViewport;
 
 
-    public static final short BIT_CIRCLE = 1 << 0;
-    public static final short BIT_BOX = 1 << 1;
-    public static final short BIT_GROUND = 1 << 2;
+    public static final short BIT_PLAYER = 1 << 0;
+    public static final short BIT_GROUND = 1 << 1;
     private World world;
     private WorldContactListener worldContactListener;
     private Box2DDebugRenderer box2DDebugRenderer;
@@ -39,7 +38,7 @@ public class MysticGarden extends Game {
         accumulator = 0f;
 
         Box2D.init();
-        world = new World(new Vector2(0, -9.81f), true);
+        world = new World(new Vector2(0, 0), true);
         worldContactListener = new WorldContactListener();
         world.setContactListener(worldContactListener);
         box2DDebugRenderer = new Box2DDebugRenderer();
