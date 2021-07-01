@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.5" tiledversion="1.7.0" orientation="orthogonal" renderorder="right-up" width="64" height="64" tilewidth="32" tileheight="32" infinite="0" nextlayerid="7" nextobjectid="4">
+ <tileset firstgid="1" source="map.tsx"/>
+ <layer id="1" name="ground" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJztw0ENAAAMA6FTU/8SJ2MfSFg1VVVVVVVVVVVVVVVVVVVV9fUBdIdgHw==
+  </data>
+ </layer>
+ <layer id="2" name="background_1" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt18kJwDAMBEC3k7dz919YlIfBFUQEzcD+JYRh3RoAAAAAAAAAAAAAAPzLHlkjW/YgSe5IjyzZgyR4b99b3f3H7UeqvYErckw5c8cBAD4y+n/VP8DcAat34Ir7zx1Y/63hAS8JB10=
+  </data>
+ </layer>
+ <layer id="3" name="background_2" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt1yEOwDAQA8H8K///V3nUqMCkPs1IR2K0MGsBAAAAAAAAAAAAAAB/t4+7vU311ad/Nv3Z3k5/trfTn+3t9Gd7O/3Z3k5/trc7/7pvN9kDDBoKYA==
+  </data>
+ </layer>
+ <layer id="4" name="foreground_1" width="64" height="64">
+  <data encoding="base64" compression="zlib">
+   eJzt1UERAAAIw7CpxL8UZLDjEgX9NQEAAAAAAAAAAAAAAACATnMdAABFfPG/BedtAK0=
+  </data>
+ </layer>
+ <objectgroup id="5" name="gameObject">
+  <object id="2" gid="12" x="95.6667" y="1759.33" width="32" height="32"/>
+  <object id="3" gid="12" x="191.333" y="1759.33" width="32" height="32"/>
+ </objectgroup>
+ <objectgroup id="6" name="playerStartLocation">
+  <object id="1" x="148" y="1821.33">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

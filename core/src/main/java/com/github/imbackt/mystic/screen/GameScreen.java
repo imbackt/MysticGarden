@@ -2,7 +2,12 @@ package com.github.imbackt.mystic.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.*;
 import com.github.imbackt.mystic.MysticGarden;
 
@@ -11,11 +16,19 @@ import static com.github.imbackt.mystic.MysticGarden.*;
 public class GameScreen extends AbstractScreen {
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
+
     private final Body player;
 
+    private final AssetManager assetManager;
+    private final OrthogonalTiledMapRenderer mapRenderer;
+    private final OrthographicCamera gameCamera;
 
     public GameScreen(MysticGarden context) {
         super(context);
+
+        assetManager = context.getAssetManager();
+        mapRenderer = new OrthogonalTiledMapRenderer(null, UNIT_SCALE, context.getSpriteBatch());
+        gameCamera = context.getGameCamera();
 
         // create player
         bodyDef = new BodyDef();
@@ -59,7 +72,7 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void show() {
-
+        mapRenderer.setMap(assetManager.get("map/map.tmx", TiledMap.class));
     }
 
     @Override
@@ -93,6 +106,8 @@ public class GameScreen extends AbstractScreen {
         );
 
         viewport.apply(true);
+        mapRenderer.setView(gameCamera);
+        mapRenderer.render();
         box2DDebugRenderer.render(world, viewport.getCamera().combined);
     }
 
