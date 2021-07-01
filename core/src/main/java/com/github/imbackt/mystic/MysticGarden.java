@@ -29,9 +29,13 @@ public class MysticGarden extends Game {
     private World world;
     private Box2DDebugRenderer box2DDebugRenderer;
 
+    private static final float FIXED_TIME_STEP = 1 / 60f;
+    private float accumulator;
+
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
+        accumulator = 0f;
 
         Box2D.init();
         world = new World(new Vector2(0, -9.81f), true);
@@ -39,7 +43,7 @@ public class MysticGarden extends Game {
 
         screenViewport = new FitViewport(9, 16);
         screenCache = new EnumMap<>(ScreenType.class);
-        setScreen(ScreenType.LOADING);
+        setScreen(ScreenType.GAME);
     }
 
     public FitViewport getScreenViewport() {
@@ -70,6 +74,20 @@ public class MysticGarden extends Game {
             Gdx.app.debug(TAG, "Switching to screen: " + screenType);
             setScreen(screen);
         }
+    }
+
+    @Override
+    public void render() {
+        super.render();
+
+        //Gdx.app.debug(TAG, "" + Gdx.graphics.getDeltaTime());
+        accumulator += Gdx.graphics.getDeltaTime();
+        while (accumulator >= FIXED_TIME_STEP) {
+            world.step(FIXED_TIME_STEP, 6, 2);
+            accumulator -= FIXED_TIME_STEP;
+        }
+
+        //final float alpha = accumulator / FIXED_TIME_STEP;
     }
 
     @Override

@@ -43,7 +43,7 @@ public class GameScreen extends AbstractScreen {
         body = world.createBody(bodyDef);
 
         fixtureDef.isSensor = false;
-        fixtureDef.restitution = 0.5f;
+        fixtureDef.restitution = 0f;
         fixtureDef.friction = 0.2f;
         fixtureDef.filter.categoryBits = BIT_BOX;
         fixtureDef.filter.maskBits = BIT_GROUND | BIT_CIRCLE;
@@ -60,7 +60,7 @@ public class GameScreen extends AbstractScreen {
         body = world.createBody(bodyDef);
 
         fixtureDef.isSensor = false;
-        fixtureDef.restitution = 0.5f;
+        fixtureDef.restitution = 0f;
         fixtureDef.friction = 0.2f;
         fixtureDef.filter.categoryBits = BIT_GROUND;
         fixtureDef.filter.maskBits = -1;
@@ -87,7 +87,6 @@ public class GameScreen extends AbstractScreen {
         }
 
         viewport.apply(true);
-        world.step(delta, 6, 2);
         box2DDebugRenderer.render(world, viewport.getCamera().combined);
     }
 
