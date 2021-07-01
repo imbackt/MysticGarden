@@ -27,6 +27,7 @@ public class MysticGarden extends Game {
     public static final short BIT_BOX = 1 << 1;
     public static final short BIT_GROUND = 1 << 2;
     private World world;
+    private WorldContactListener worldContactListener;
     private Box2DDebugRenderer box2DDebugRenderer;
 
     private static final float FIXED_TIME_STEP = 1 / 60f;
@@ -39,6 +40,8 @@ public class MysticGarden extends Game {
 
         Box2D.init();
         world = new World(new Vector2(0, -9.81f), true);
+        worldContactListener = new WorldContactListener();
+        world.setContactListener(worldContactListener);
         box2DDebugRenderer = new Box2DDebugRenderer();
 
         screenViewport = new FitViewport(9, 16);
