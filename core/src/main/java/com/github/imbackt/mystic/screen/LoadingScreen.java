@@ -2,15 +2,14 @@ package com.github.imbackt.mystic.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.github.imbackt.mystic.MysticGarden;
 
-public class LoadingScreen implements Screen {
-    private final MysticGarden context;
+public class LoadingScreen extends AbstractScreen {
 
-    public LoadingScreen(final MysticGarden context) {
-        this.context = context;
+
+    public LoadingScreen(MysticGarden context) {
+        super(context);
     }
 
     @Override
@@ -26,11 +25,8 @@ public class LoadingScreen implements Screen {
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             context.setScreen(ScreenType.GAME);
         }
-    }
 
-    @Override
-    public void resize(int width, int height) {
-
+        viewport.apply();
     }
 
     @Override
