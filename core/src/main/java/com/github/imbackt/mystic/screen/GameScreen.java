@@ -9,13 +9,16 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.github.imbackt.mystic.MysticGarden;
 import com.github.imbackt.mystic.map.CollisionArea;
 import com.github.imbackt.mystic.map.Map;
+import com.github.imbackt.mystic.ui.GameUI;
 
 import static com.github.imbackt.mystic.MysticGarden.*;
 
-public class GameScreen extends AbstractScreen {
+public class GameScreen extends AbstractScreen<GameUI> {
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
 
@@ -48,7 +51,12 @@ public class GameScreen extends AbstractScreen {
         spawnPlayer();
     }
 
-    private void resetBodiesAndFixtureDefinition(){
+    @Override
+    protected GameUI getScreenUI(Skin skin) {
+        return new GameUI(skin);
+    }
+
+    private void resetBodiesAndFixtureDefinition() {
         bodyDef.position.set(0, 0);
         bodyDef.gravityScale = 1;
         bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -81,7 +89,7 @@ public class GameScreen extends AbstractScreen {
         pShape.dispose();
     }
 
-    private void spawnCollisionAreas () {
+    private void spawnCollisionAreas() {
 
         for (final CollisionArea collisionArea : map.getCollisionAreas()) {
             resetBodiesAndFixtureDefinition();
@@ -99,10 +107,6 @@ public class GameScreen extends AbstractScreen {
             body.createFixture(fixtureDef);
             chainShape.dispose();
         }
-    }
-
-    @Override
-    public void show() {
     }
 
     @Override
@@ -151,11 +155,6 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void resume() {
-
-    }
-
-    @Override
-    public void hide() {
 
     }
 

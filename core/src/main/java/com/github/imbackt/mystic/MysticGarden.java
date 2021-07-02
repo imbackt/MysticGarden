@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2D;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -45,7 +46,7 @@ public class MysticGarden extends Game {
     private float accumulator;
 
     private AssetManager assetManager;
-
+    private Stage stage;
     private Skin skin;
 
     @Override
@@ -64,6 +65,7 @@ public class MysticGarden extends Game {
         assetManager = new AssetManager();
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
         initializeSkin();
+        stage = new Stage(new FitViewport(450, 800), spriteBatch);
 
         gameCamera = new OrthographicCamera();
         screenViewport = new FitViewport(9, 16, gameCamera);
@@ -90,6 +92,14 @@ public class MysticGarden extends Game {
         assetManager.load("ui/hud.json", Skin.class, skinParameter);
         assetManager.finishLoading();
         skin = assetManager.get("ui/hud.json", Skin.class);
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Skin getSkin() {
+        return skin;
     }
 
     public SpriteBatch getSpriteBatch() {
@@ -138,7 +148,6 @@ public class MysticGarden extends Game {
     public void render() {
         super.render();
 
-        //Gdx.app.debug(TAG, "" + Gdx.graphics.getDeltaTime());
         accumulator += Gdx.graphics.getDeltaTime();
         while (accumulator >= FIXED_TIME_STEP) {
             world.step(FIXED_TIME_STEP, 6, 2);
@@ -146,6 +155,9 @@ public class MysticGarden extends Game {
         }
 
         //final float alpha = accumulator / FIXED_TIME_STEP;
+        stage.getViewport().apply();
+        stage.act();
+        stage.draw();
     }
 
     @Override
@@ -155,5 +167,6 @@ public class MysticGarden extends Game {
         box2DDebugRenderer.dispose();
         assetManager.dispose();
         spriteBatch.dispose();
+        stage.dispose();
     }
 }
