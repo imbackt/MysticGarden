@@ -6,8 +6,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Colors;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -19,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -48,6 +52,7 @@ public class MysticGarden extends Game {
     private AssetManager assetManager;
     private Stage stage;
     private Skin skin;
+    private I18NBundle i18NBundle;
 
     @Override
     public void create() {
@@ -75,6 +80,11 @@ public class MysticGarden extends Game {
     }
 
     private void initializeSkin() {
+        // Setup markup colors
+        Colors.put("Red", Color.RED);
+        Colors.put("Blue", Color.BLUE);
+
+
         // Generate ttf bitmaps
         final ObjectMap<String, Object> resources = new ObjectMap<>();
         final FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal("ui/font.ttf"));
@@ -84,14 +94,22 @@ public class MysticGarden extends Game {
         final int[] sizesToCreate = {16, 20, 26, 32};
         for (int size : sizesToCreate) {
             fontParameter.size = size;
-            resources.put("font_" + size, fontGenerator.generateFont(fontParameter));
+            final BitmapFont bitmapFont = fontGenerator.generateFont(fontParameter);
+            bitmapFont.getData().markupEnabled = true;
+            resources.put("font_" + size, bitmapFont);
         }
         fontGenerator.dispose();
         //load skin
         final SkinLoader.SkinParameter skinParameter = new SkinLoader.SkinParameter("ui/hud.atlas", resources);
         assetManager.load("ui/hud.json", Skin.class, skinParameter);
+        assetManager.load("ui/strings", I18NBundle.class);
         assetManager.finishLoading();
         skin = assetManager.get("ui/hud.json", Skin.class);
+        i18NBundle = assetManager.get("ui/strings", I18NBundle.class);
+    }
+
+    public I18NBundle getI18NBundle() {
+        return i18NBundle;
     }
 
     public Stage getStage() {

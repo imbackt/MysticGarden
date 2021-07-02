@@ -24,10 +24,10 @@ public abstract class AbstractScreen<T extends Table> implements Screen {
         this.box2DDebugRenderer = context.getBox2DDebugRenderer();
 
         stage = context.getStage();
-        screenUI = getScreenUI(context.getSkin());
+        screenUI = getScreenUI(context);
     }
 
-    protected abstract T getScreenUI(Skin skin);
+    protected abstract T getScreenUI(final MysticGarden context);
 
     @Override
     public void resize(int width, int height) {

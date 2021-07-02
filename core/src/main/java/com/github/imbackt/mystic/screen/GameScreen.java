@@ -52,8 +52,8 @@ public class GameScreen extends AbstractScreen<GameUI> {
     }
 
     @Override
-    protected GameUI getScreenUI(Skin skin) {
-        return new GameUI(skin);
+    protected GameUI getScreenUI(MysticGarden context) {
+        return new GameUI(context);
     }
 
     private void resetBodiesAndFixtureDefinition() {

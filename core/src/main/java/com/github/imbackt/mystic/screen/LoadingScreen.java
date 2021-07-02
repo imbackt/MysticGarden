@@ -22,8 +22,8 @@ public class LoadingScreen extends AbstractScreen<LoadingUI> {
     }
 
     @Override
-    protected LoadingUI getScreenUI(Skin skin) {
-        return new LoadingUI(skin);
+    protected LoadingUI getScreenUI(MysticGarden context) {
+        return new LoadingUI(context);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class LoadingScreen extends AbstractScreen<LoadingUI> {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         if (assetManager.update()) {
-            if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY)) {
+            if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.isTouched()) {
                 context.setScreen(ScreenType.GAME);
             }
         }
