@@ -21,7 +21,7 @@ public class GameScreen extends AbstractScreen {
     private final BodyDef bodyDef;
     private final FixtureDef fixtureDef;
 
-    private final Body player;
+    private Body player;
 
     private final AssetManager assetManager;
     private final OrthogonalTiledMapRenderer mapRenderer;
@@ -42,29 +42,12 @@ public class GameScreen extends AbstractScreen {
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
 
-        // create player
-        bodyDef.position.set(4.5f, 3);
-        bodyDef.gravityScale = 1;
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-        player = world.createBody(bodyDef);
-        player.setUserData("PLAYER");
-
-        fixtureDef.isSensor = false;
-        fixtureDef.restitution = 0;
-        fixtureDef.friction = 0.2f;
-        fixtureDef.filter.categoryBits = BIT_PLAYER;
-        fixtureDef.filter.maskBits = BIT_GROUND;
-        final PolygonShape pShape = new PolygonShape();
-        pShape.setAsBox(0.5f, 0.5f);
-        fixtureDef.shape = pShape;
-        player.createFixture(fixtureDef);
-        pShape.dispose();
-
         final TiledMap tiledMap = assetManager.get("map/map.tmx", TiledMap.class);
         mapRenderer.setMap(tiledMap);
         map = new Map(tiledMap);
 
         spawnCollisionAreas();
+        spawnPlayer();
     }
 
     private void resetBodiesAndFixtureDefinition(){
@@ -80,6 +63,24 @@ public class GameScreen extends AbstractScreen {
         fixtureDef.filter.categoryBits = 0x0001;
         fixtureDef.filter.maskBits = -1;
         fixtureDef.shape = null;
+    }
+
+    private void spawnPlayer() {
+        resetBodiesAndFixtureDefinition();
+
+        bodyDef.position.set(map.getPlayerStartLocation());
+        bodyDef.fixedRotation = true;
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        player = world.createBody(bodyDef);
+        player.setUserData("PLAYER");
+
+        fixtureDef.filter.categoryBits = BIT_PLAYER;
+        fixtureDef.filter.maskBits = BIT_GROUND;
+        final PolygonShape pShape = new PolygonShape();
+        pShape.setAsBox(0.5f, 0.5f);
+        fixtureDef.shape = pShape;
+        player.createFixture(fixtureDef);
+        pShape.dispose();
     }
 
     private void spawnCollisionAreas () {

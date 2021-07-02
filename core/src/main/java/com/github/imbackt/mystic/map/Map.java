@@ -9,18 +9,42 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Polyline;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+
+import static com.github.imbackt.mystic.MysticGarden.UNIT_SCALE;
 
 public class Map {
     public static final String TAG = Map.class.getSimpleName();
 
     private final TiledMap tiledMap;
     private final Array<CollisionArea> collisionAreas;
+    private final Vector2 playerStartLocation;
 
     public Map(TiledMap tiledMap) {
         this.tiledMap = tiledMap;
         collisionAreas = new Array<>();
+        playerStartLocation = new Vector2();
         parseCollisionLayer();
+        parsePlayerStartLocation();
+    }
+
+    private void parsePlayerStartLocation() {
+        final MapLayer startLocationLayer = tiledMap.getLayers().get("playerStartLocation");
+        if (startLocationLayer == null) {
+            Gdx.app.debug(TAG, "There is no playerStartLocation layer.");
+            return;
+        }
+
+        for (final MapObject mapObject : startLocationLayer.getObjects()) {
+            if (mapObject instanceof RectangleMapObject) {
+                final RectangleMapObject rectangleMapObject = (RectangleMapObject) mapObject;
+                final Rectangle rectangle = rectangleMapObject.getRectangle();
+                playerStartLocation.set(rectangle.x * UNIT_SCALE, rectangle.y * UNIT_SCALE);
+            } else {
+                Gdx.app.debug(TAG, "MapObject of type " + mapObject + " is not supported for playerStartLocation layer");
+            }
+        }
     }
 
     private void parseCollisionLayer() {
@@ -30,13 +54,7 @@ public class Map {
             return;
         }
 
-        final MapObjects mapObjects = collisionLayer.getObjects();
-        if (mapObjects == null) {
-            Gdx.app.debug(TAG, "There is no collision mapObjects defined");
-            return;
-        }
-
-        for (final MapObject mapObject : mapObjects) {
+        for (final MapObject mapObject : collisionLayer.getObjects()) {
             if (mapObject instanceof RectangleMapObject) {
                 final RectangleMapObject rectangleMapObject = (RectangleMapObject) mapObject;
                 final Rectangle rectangle = rectangleMapObject.getRectangle();
@@ -75,5 +93,9 @@ public class Map {
 
     public Array<CollisionArea> getCollisionAreas() {
         return collisionAreas;
+    }
+
+    public Vector2 getPlayerStartLocation() {
+        return playerStartLocation;
     }
 }
