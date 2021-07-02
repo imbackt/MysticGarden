@@ -1,7 +1,5 @@
 package com.github.imbackt.mystic.map;
 
-import com.badlogic.gdx.math.Vector2;
-
 import static com.github.imbackt.mystic.MysticGarden.UNIT_SCALE;
 
 public class CollisionArea {
