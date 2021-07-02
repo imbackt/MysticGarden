@@ -5,11 +5,15 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.map.CollisionArea;
+import com.github.imbackt.mystic.map.Map;
 
 import static com.github.imbackt.mystic.MysticGarden.*;
 
@@ -22,6 +26,8 @@ public class GameScreen extends AbstractScreen {
     private final AssetManager assetManager;
     private final OrthogonalTiledMapRenderer mapRenderer;
     private final OrthographicCamera gameCamera;
+    private final Map map;
+    private final GLProfiler profiler;
 
     public GameScreen(MysticGarden context) {
         super(context);
@@ -30,10 +36,13 @@ public class GameScreen extends AbstractScreen {
         mapRenderer = new OrthogonalTiledMapRenderer(null, UNIT_SCALE, context.getSpriteBatch());
         gameCamera = context.getGameCamera();
 
-        // create player
+        profiler = new GLProfiler(Gdx.graphics);
+        profiler.enable();
+
         bodyDef = new BodyDef();
         fixtureDef = new FixtureDef();
 
+        // create player
         bodyDef.position.set(4.5f, 3);
         bodyDef.gravityScale = 1;
         bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -51,28 +60,50 @@ public class GameScreen extends AbstractScreen {
         player.createFixture(fixtureDef);
         pShape.dispose();
 
-        // create room
+        final TiledMap tiledMap = assetManager.get("map/map.tmx", TiledMap.class);
+        mapRenderer.setMap(tiledMap);
+        map = new Map(tiledMap);
+
+        spawnCollisionAreas();
+    }
+
+    private void resetBodiesAndFixtureDefinition(){
         bodyDef.position.set(0, 0);
         bodyDef.gravityScale = 1;
         bodyDef.type = BodyDef.BodyType.StaticBody;
-        final Body body = world.createBody(bodyDef);
-        body.setUserData("GROUND");
+        bodyDef.fixedRotation = false;
 
+        fixtureDef.density = 0;
         fixtureDef.isSensor = false;
         fixtureDef.restitution = 0;
         fixtureDef.friction = 0.2f;
-        fixtureDef.filter.categoryBits = BIT_GROUND;
+        fixtureDef.filter.categoryBits = 0x0001;
         fixtureDef.filter.maskBits = -1;
-        final ChainShape chainShape = new ChainShape();
-        chainShape.createLoop(new float[]{1, 1, 1, 15, 8, 15, 8, 1});
-        fixtureDef.shape = chainShape;
-        body.createFixture(fixtureDef);
-        chainShape.dispose();
+        fixtureDef.shape = null;
+    }
+
+    private void spawnCollisionAreas () {
+
+        for (final CollisionArea collisionArea : map.getCollisionAreas()) {
+            resetBodiesAndFixtureDefinition();
+
+            bodyDef.position.set(collisionArea.getX(), collisionArea.getY());
+            bodyDef.fixedRotation = true;
+            final Body body = world.createBody(bodyDef);
+            body.setUserData("GROUND");
+
+            fixtureDef.filter.categoryBits = BIT_GROUND;
+            fixtureDef.filter.maskBits = -1;
+            final ChainShape chainShape = new ChainShape();
+            chainShape.createChain(collisionArea.getVertices());
+            fixtureDef.shape = chainShape;
+            body.createFixture(fixtureDef);
+            chainShape.dispose();
+        }
     }
 
     @Override
     public void show() {
-        mapRenderer.setMap(assetManager.get("map/map.tmx", TiledMap.class));
     }
 
     @Override
@@ -109,6 +140,9 @@ public class GameScreen extends AbstractScreen {
         mapRenderer.setView(gameCamera);
         mapRenderer.render();
         box2DDebugRenderer.render(world, viewport.getCamera().combined);
+        Gdx.app.debug("RenderInfo", "Binding: " + profiler.getTextureBindings());
+        Gdx.app.debug("RenderInfo", "DrawCalls: " + profiler.getDrawCalls());
+        profiler.reset();
     }
 
     @Override
@@ -128,6 +162,6 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-
+        mapRenderer.dispose();
     }
 }

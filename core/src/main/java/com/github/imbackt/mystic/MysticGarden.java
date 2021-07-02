@@ -126,5 +126,6 @@ public class MysticGarden extends Game {
         world.dispose();
         box2DDebugRenderer.dispose();
         assetManager.dispose();
+        spriteBatch.dispose();
     }
 }
