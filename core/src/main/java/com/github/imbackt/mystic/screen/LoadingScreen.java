@@ -8,6 +8,9 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.input.GameKeys;
+import com.github.imbackt.mystic.input.InputListener;
+import com.github.imbackt.mystic.input.InputManager;
 import com.github.imbackt.mystic.ui.LoadingUI;
 
 public class LoadingScreen extends AbstractScreen<LoadingUI> {
@@ -18,7 +21,6 @@ public class LoadingScreen extends AbstractScreen<LoadingUI> {
 
         this.assetManager = context.getAssetManager();
         assetManager.load("map/map.tmx", TiledMap.class);
-
     }
 
     @Override
@@ -31,11 +33,7 @@ public class LoadingScreen extends AbstractScreen<LoadingUI> {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (assetManager.update()) {
-            if(Gdx.input.isKeyPressed(Input.Keys.ANY_KEY) || Gdx.input.isTouched()) {
-                context.setScreen(ScreenType.GAME);
-            }
-        }
+        assetManager.update();
         screenUI.setProgress(assetManager.getProgress());
     }
 
@@ -51,6 +49,18 @@ public class LoadingScreen extends AbstractScreen<LoadingUI> {
 
     @Override
     public void dispose() {
+
+    }
+
+    @Override
+    public void keyPressed(InputManager manager, GameKeys key) {
+        if (assetManager.getProgress() >= 1) {
+            context.setScreen(ScreenType.GAME);
+        }
+    }
+
+    @Override
+    public void keyUp(InputManager manager, GameKeys key) {
 
     }
 }

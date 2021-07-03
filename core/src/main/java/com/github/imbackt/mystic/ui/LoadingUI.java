@@ -1,5 +1,7 @@
 package com.github.imbackt.mystic.ui;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.I18NBundle;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.input.GameKeys;
 
 public class LoadingUI extends Table {
     private final String loadingString;
@@ -30,6 +33,13 @@ public class LoadingUI extends Table {
         pressAnyKey = new TextButton(i18NBundle.format("pressAnyKey"), getSkin(), "normal");
         pressAnyKey.getLabel().setWrap(true);
         pressAnyKey.setVisible(false);
+        pressAnyKey.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                context.getInputManager().notifyKeyDown(GameKeys.SELECT);
+                return true;
+            }
+        });
 
         add(pressAnyKey).expand().fill().center().row();
         add(textButton).expandX().fillX().bottom().row();
@@ -43,7 +53,7 @@ public class LoadingUI extends Table {
         stringBuilder.setLength(0);
         stringBuilder.append(loadingString);
         stringBuilder.append(" (");
-        stringBuilder.append((int)(progress * 100));
+        stringBuilder.append((int) (progress * 100));
         stringBuilder.append("%)");
         textButton.getLabel().invalidateHierarchy();
 

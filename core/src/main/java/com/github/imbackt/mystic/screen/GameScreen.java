@@ -1,7 +1,6 @@
 package com.github.imbackt.mystic.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,9 +8,9 @@ import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.input.GameKeys;
+import com.github.imbackt.mystic.input.InputManager;
 import com.github.imbackt.mystic.map.CollisionArea;
 import com.github.imbackt.mystic.map.Map;
 import com.github.imbackt.mystic.ui.GameUI;
@@ -23,6 +22,10 @@ public class GameScreen extends AbstractScreen<GameUI> {
     private final FixtureDef fixtureDef;
 
     private Body player;
+
+    private boolean directionChane;
+    private int xFactor;
+    private int yFactor;
 
     private final AssetManager assetManager;
     private final OrthogonalTiledMapRenderer mapRenderer;
@@ -114,37 +117,20 @@ public class GameScreen extends AbstractScreen<GameUI> {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        final float speedX;
-        final float speedY;
-
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            speedX = -3;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            speedX = 3;
-        } else {
-            speedX = 0;
+        if (directionChane) {
+            player.applyLinearImpulse(
+                    (xFactor * 3 - player.getLinearVelocity().x) * player.getMass(),
+                    (yFactor * 3 - player.getLinearVelocity().y) * player.getMass(),
+                    player.getWorldCenter().x, player.getWorldCenter().y, true
+            );
         }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            speedY = -3;
-        } else if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            speedY = 3;
-        } else {
-            speedY = 0;
-        }
-
-        player.applyLinearImpulse(
-                (speedX - player.getLinearVelocity().x) * player.getMass(),
-                (speedY - player.getLinearVelocity().y) * player.getMass(),
-                player.getWorldCenter().x, player.getWorldCenter().y, true
-        );
 
         viewport.apply(true);
         mapRenderer.setView(gameCamera);
         mapRenderer.render();
         box2DDebugRenderer.render(world, viewport.getCamera().combined);
-        Gdx.app.debug("RenderInfo", "Binding: " + profiler.getTextureBindings());
-        Gdx.app.debug("RenderInfo", "DrawCalls: " + profiler.getDrawCalls());
+        //Gdx.app.debug("RenderInfo", "Binding: " + profiler.getTextureBindings());
+        //Gdx.app.debug("RenderInfo", "DrawCalls: " + profiler.getDrawCalls());
         profiler.reset();
     }
 
@@ -161,5 +147,53 @@ public class GameScreen extends AbstractScreen<GameUI> {
     @Override
     public void dispose() {
         mapRenderer.dispose();
+    }
+
+    @Override
+    public void keyPressed(InputManager manager, GameKeys key) {
+        switch (key) {
+            case LEFT:
+                directionChane = true;
+                xFactor = -1;
+                break;
+            case RIGHT:
+                directionChane = true;
+                xFactor = 1;
+                break;
+            case UP:
+                directionChane = true;
+                yFactor = 1;
+                break;
+            case DOWN:
+                directionChane = true;
+                yFactor = -1;
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void keyUp(InputManager manager, GameKeys key) {
+        switch (key) {
+            case LEFT:
+                directionChane = true;
+                xFactor = manager.isKeyPressed(GameKeys.RIGHT) ? 1 : 0;
+                break;
+            case RIGHT:
+                directionChane = true;
+                xFactor = manager.isKeyPressed(GameKeys.LEFT) ? -1 : 0;
+                break;
+            case UP:
+                directionChane = true;
+                yFactor = manager.isKeyPressed(GameKeys.DOWN) ? -1 : 0;
+                break;
+            case DOWN:
+                directionChane = true;
+                yFactor = manager.isKeyPressed(GameKeys.UP) ? 1 : 0;
+                break;
+            default:
+                break;
+        }
     }
 }

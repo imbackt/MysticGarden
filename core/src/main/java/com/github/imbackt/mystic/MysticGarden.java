@@ -1,9 +1,6 @@
 package com.github.imbackt.mystic;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.graphics.Color;
@@ -27,6 +24,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.github.imbackt.mystic.input.InputManager;
 import com.github.imbackt.mystic.screen.ScreenType;
 
 import java.util.EnumMap;
@@ -54,11 +52,14 @@ public class MysticGarden extends Game {
     private Skin skin;
     private I18NBundle i18NBundle;
 
+    private InputManager inputManager;
+
     @Override
     public void create() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
         spriteBatch = new SpriteBatch();
 
+        // box2d
         accumulator = 0f;
         Box2D.init();
         world = new World(new Vector2(0, 0), true);
@@ -72,6 +73,11 @@ public class MysticGarden extends Game {
         initializeSkin();
         stage = new Stage(new FitViewport(450, 800), spriteBatch);
 
+        // input
+        inputManager = new InputManager();
+        Gdx.input.setInputProcessor(new InputMultiplexer(inputManager, stage));
+
+        // set loading screen
         gameCamera = new OrthographicCamera();
         screenViewport = new FitViewport(9, 16, gameCamera);
         screenCache = new EnumMap<>(ScreenType.class);
@@ -106,6 +112,10 @@ public class MysticGarden extends Game {
         assetManager.finishLoading();
         skin = assetManager.get("ui/hud.json", Skin.class);
         i18NBundle = assetManager.get("ui/strings", I18NBundle.class);
+    }
+
+    public InputManager getInputManager() {
+        return inputManager;
     }
 
     public I18NBundle getI18NBundle() {

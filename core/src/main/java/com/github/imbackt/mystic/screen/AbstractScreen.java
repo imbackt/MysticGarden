@@ -8,20 +8,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.input.InputListener;
+import com.github.imbackt.mystic.input.InputManager;
 
-public abstract class AbstractScreen<T extends Table> implements Screen {
+public abstract class AbstractScreen<T extends Table> implements Screen, InputListener {
     protected final MysticGarden context;
     protected final FitViewport viewport;
     protected final World world;
     protected final Box2DDebugRenderer box2DDebugRenderer;
     protected final Stage stage;
     protected final T screenUI;
+    protected final InputManager inputManager;
 
     public AbstractScreen(MysticGarden context) {
         this.context = context;
         this.viewport = context.getScreenViewport();
         this.world = context.getWorld();
         this.box2DDebugRenderer = context.getBox2DDebugRenderer();
+        this.inputManager = context.getInputManager();
 
         stage = context.getStage();
         screenUI = getScreenUI(context);
@@ -37,11 +41,13 @@ public abstract class AbstractScreen<T extends Table> implements Screen {
 
     @Override
     public void show() {
+        inputManager.addInputListener(this);
         stage.addActor(screenUI);
     }
 
     @Override
     public void hide() {
+        inputManager.removeListener(this);
         stage.getRoot().removeActor(screenUI);
     }
 }
