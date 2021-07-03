@@ -11,6 +11,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.github.imbackt.mystic.MysticGarden;
 import com.github.imbackt.mystic.ecs.component.Box2DComponent;
 import com.github.imbackt.mystic.ecs.component.PlayerComponent;
+import com.github.imbackt.mystic.ecs.system.PlayerCameraSystem;
 import com.github.imbackt.mystic.ecs.system.PlayerMovementSystem;
 
 import static com.github.imbackt.mystic.MysticGarden.BIT_GROUND;
@@ -33,6 +34,7 @@ public class ECSEngine extends PooledEngine {
         fixtureDef = new FixtureDef();
 
         this.addSystem(new PlayerMovementSystem(context));
+        this.addSystem(new PlayerCameraSystem(context));
     }
 
     private void resetBodiesAndFixtureDefinition() {

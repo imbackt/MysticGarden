@@ -84,14 +84,17 @@ public class MysticGarden extends Game {
         inputManager = new InputManager();
         Gdx.input.setInputProcessor(new InputMultiplexer(inputManager, stage));
 
-        ecsEngine = new ECSEngine(this);
 
-        // set loading screen
+        // setup game view port
         gameCamera = new OrthographicCamera();
         screenViewport = new FitViewport(9, 16, gameCamera);
+
+        // ecs engine
+        ecsEngine = new ECSEngine(this);
+
+        // set first screen
         screenCache = new EnumMap<>(ScreenType.class);
         setScreen(ScreenType.LOADING);
-
     }
 
     private void initializeSkin() {
