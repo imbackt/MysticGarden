@@ -5,12 +5,14 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.github.imbackt.mystic.MysticGarden;
 import com.github.imbackt.mystic.audio.AudioType;
 import com.github.imbackt.mystic.input.GameKeys;
 import com.github.imbackt.mystic.input.InputManager;
-import com.github.imbackt.mystic.ui.LoadingUI;
+import com.github.imbackt.mystic.map.MapType;
+import com.github.imbackt.mystic.view.LoadingUI;
 
 public class LoadingScreen extends AbstractScreen<LoadingUI> {
     private final AssetManager assetManager;
@@ -20,7 +22,12 @@ public class LoadingScreen extends AbstractScreen<LoadingUI> {
         super(context);
 
         this.assetManager = context.getAssetManager();
-        assetManager.load("map/map.tmx", TiledMap.class);
+
+        assetManager.load("characters_and_effects/character_and_effect.atlas", TextureAtlas.class);
+
+        for (final MapType mapType : MapType.values()) {
+            assetManager.load(mapType.getFilePath(), TiledMap.class);
+        }
 
         isMusicLoaded = false;
         for (final AudioType audioType : AudioType.values()) {

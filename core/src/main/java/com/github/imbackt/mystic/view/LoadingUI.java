@@ -1,4 +1,4 @@
-package com.github.imbackt.mystic.ui;
+package com.github.imbackt.mystic.view;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;

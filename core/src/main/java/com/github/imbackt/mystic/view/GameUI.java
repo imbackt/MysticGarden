@@ -1,6 +1,5 @@
-package com.github.imbackt.mystic.ui;
+package com.github.imbackt.mystic.view;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.github.imbackt.mystic.MysticGarden;
@@ -11,5 +10,6 @@ public class GameUI extends Table {
         setFillParent(true);
 
         add(new TextButton("Play", getSkin(), "huge"));
+        bottom();
     }
 }

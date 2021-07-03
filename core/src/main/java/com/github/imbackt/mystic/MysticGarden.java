@@ -27,6 +27,7 @@ import com.github.imbackt.mystic.ecs.ECSEngine;
 import com.github.imbackt.mystic.input.InputManager;
 import com.github.imbackt.mystic.map.MapManager;
 import com.github.imbackt.mystic.screen.ScreenType;
+import com.github.imbackt.mystic.view.GameRenderer;
 
 import java.util.EnumMap;
 
@@ -42,12 +43,11 @@ public class MysticGarden extends Game {
     public static final FixtureDef FIXTURE_DEF = new FixtureDef();
     public static final float UNIT_SCALE = 1 / 32f;
     public static final short BIT_PLAYER = 1 << 0;
-    public static final short BIT_GROUND = 1 << 2;
+    public static final short BIT_GROUND = 1 << 1;
     private World world;
     private WorldContactListener worldContactListener;
-    private Box2DDebugRenderer box2DDebugRenderer;
 
-    private static final float FIXED_TIME_STEP = 1 / 60f;
+    private static final float FIXED_TIME_STEP = 1 / 144f;
     private float accumulator;
 
     private AssetManager assetManager;
@@ -56,9 +56,10 @@ public class MysticGarden extends Game {
     private Stage stage;
     private Skin skin;
     private I18NBundle i18NBundle;
-
     private InputManager inputManager;
     private ECSEngine ecsEngine;
+
+    private GameRenderer gameRenderer;
 
     @Override
     public void create() {
@@ -71,7 +72,6 @@ public class MysticGarden extends Game {
         world = new World(new Vector2(0, 0), true);
         worldContactListener = new WorldContactListener();
         world.setContactListener(worldContactListener);
-        box2DDebugRenderer = new Box2DDebugRenderer();
 
         // initialize assetManager
         assetManager = new AssetManager();
@@ -96,6 +96,9 @@ public class MysticGarden extends Game {
 
         // ecs engine
         ecsEngine = new ECSEngine(this);
+
+        // game renderer
+        gameRenderer = new GameRenderer(this);
 
         // set first screen
         screenCache = new EnumMap<>(ScreenType.class);
@@ -186,10 +189,6 @@ public class MysticGarden extends Game {
         return world;
     }
 
-    public Box2DDebugRenderer getBox2DDebugRenderer() {
-        return box2DDebugRenderer;
-    }
-
     public AssetManager getAssetManager() {
         return assetManager;
     }
@@ -219,24 +218,26 @@ public class MysticGarden extends Game {
     @Override
     public void render() {
         super.render();
-        ecsEngine.update(Gdx.graphics.getDeltaTime());
-        accumulator += Gdx.graphics.getDeltaTime();
+
+        final float deltaTime = Math.min(0.25f, Gdx.graphics.getDeltaTime());
+        ecsEngine.update(deltaTime);
+        accumulator += deltaTime;
         while (accumulator >= FIXED_TIME_STEP) {
             world.step(FIXED_TIME_STEP, 6, 2);
             accumulator -= FIXED_TIME_STEP;
         }
 
-        //final float alpha = accumulator / FIXED_TIME_STEP;
+        gameRenderer.render(accumulator / FIXED_TIME_STEP);
         stage.getViewport().apply();
-        stage.act();
+        stage.act(deltaTime);
         stage.draw();
     }
 
     @Override
     public void dispose() {
         super.dispose();
+        gameRenderer.dispose();
         world.dispose();
-        box2DDebugRenderer.dispose();
         assetManager.dispose();
         spriteBatch.dispose();
         stage.dispose();

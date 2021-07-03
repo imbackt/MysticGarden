@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.ecs.component.AnimationComponent;
 import com.github.imbackt.mystic.ecs.component.Box2DComponent;
 import com.github.imbackt.mystic.ecs.component.PlayerComponent;
 import com.github.imbackt.mystic.ecs.system.PlayerCameraSystem;
@@ -46,6 +47,7 @@ public class ECSEngine extends PooledEngine {
         box2DComponent.body.setUserData("PLAYER");
         box2DComponent.width = width;
         box2DComponent.height = height;
+        box2DComponent.renderPosition.set(box2DComponent.body.getPosition());
 
         FIXTURE_DEF.filter.categoryBits = BIT_PLAYER;
         FIXTURE_DEF.filter.maskBits = BIT_GROUND;
@@ -56,6 +58,8 @@ public class ECSEngine extends PooledEngine {
         pShape.dispose();
 
         player.add(box2DComponent);
+        final AnimationComponent animationComponent = this.createComponent(AnimationComponent.class);
+        player.add(animationComponent);
         this.addEntity(player);
     }
 }
