@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.github.imbackt.mystic.audio.AudioManager;
+import com.github.imbackt.mystic.ecs.ECSEngine;
 import com.github.imbackt.mystic.input.InputManager;
 import com.github.imbackt.mystic.screen.ScreenType;
 
@@ -55,6 +56,7 @@ public class MysticGarden extends Game {
     private I18NBundle i18NBundle;
 
     private InputManager inputManager;
+    private ECSEngine ecsEngine;
 
     @Override
     public void create() {
@@ -81,6 +83,8 @@ public class MysticGarden extends Game {
         // input
         inputManager = new InputManager();
         Gdx.input.setInputProcessor(new InputMultiplexer(inputManager, stage));
+
+        ecsEngine = new ECSEngine(this);
 
         // set loading screen
         gameCamera = new OrthographicCamera();
@@ -117,6 +121,10 @@ public class MysticGarden extends Game {
         assetManager.finishLoading();
         skin = assetManager.get("ui/hud.json", Skin.class);
         i18NBundle = assetManager.get("ui/strings", I18NBundle.class);
+    }
+
+    public ECSEngine getEcsEngine() {
+        return ecsEngine;
     }
 
     public AudioManager getAudioManager() {
@@ -184,7 +192,7 @@ public class MysticGarden extends Game {
     @Override
     public void render() {
         super.render();
-
+        ecsEngine.update(Gdx.graphics.getDeltaTime());
         accumulator += Gdx.graphics.getDeltaTime();
         while (accumulator >= FIXED_TIME_STEP) {
             world.step(FIXED_TIME_STEP, 6, 2);

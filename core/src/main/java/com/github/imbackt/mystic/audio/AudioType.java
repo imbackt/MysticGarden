@@ -1,7 +1,7 @@
 package com.github.imbackt.mystic.audio;
 
 public enum AudioType {
-    INTRO("audio/intro.mp3", true, 0.3f),
+    INTRO("audio/intro.mp3", true, 0.1f),
     SELECT("audio/select.wav", false, 0.5f);
 
     private final String filePath;
