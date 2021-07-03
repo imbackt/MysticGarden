@@ -97,4 +97,8 @@ public class Map {
     public Vector2 getPlayerStartLocation() {
         return playerStartLocation;
     }
+
+    public TiledMap getTiledMap() {
+        return tiledMap;
+    }
 }

@@ -10,6 +10,7 @@ import com.github.imbackt.mystic.MysticGarden;
 import com.github.imbackt.mystic.audio.AudioManager;
 import com.github.imbackt.mystic.input.InputListener;
 import com.github.imbackt.mystic.input.InputManager;
+import com.github.imbackt.mystic.map.MapManager;
 
 public abstract class AbstractScreen<T extends Table> implements Screen, InputListener {
     protected final MysticGarden context;
@@ -20,6 +21,7 @@ public abstract class AbstractScreen<T extends Table> implements Screen, InputLi
     protected final T screenUI;
     protected final InputManager inputManager;
     protected final AudioManager audioManager;
+    protected final MapManager mapManager;
 
     public AbstractScreen(MysticGarden context) {
         this.context = context;
@@ -28,6 +30,7 @@ public abstract class AbstractScreen<T extends Table> implements Screen, InputLi
         this.box2DDebugRenderer = context.getBox2DDebugRenderer();
         this.inputManager = context.getInputManager();
         this.audioManager = context.getAudioManager();
+        this.mapManager = context.getMapManager();
 
         stage = context.getStage();
         screenUI = getScreenUI(context);

@@ -13,9 +13,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Box2D;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -27,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.github.imbackt.mystic.audio.AudioManager;
 import com.github.imbackt.mystic.ecs.ECSEngine;
 import com.github.imbackt.mystic.input.InputManager;
+import com.github.imbackt.mystic.map.MapManager;
 import com.github.imbackt.mystic.screen.ScreenType;
 
 import java.util.EnumMap;
@@ -39,6 +38,8 @@ public class MysticGarden extends Game {
     private OrthographicCamera gameCamera;
     private FitViewport screenViewport;
 
+    public static final BodyDef BODY_DEF = new BodyDef();
+    public static final FixtureDef FIXTURE_DEF = new FixtureDef();
     public static final float UNIT_SCALE = 1 / 32f;
     public static final short BIT_PLAYER = 1 << 0;
     public static final short BIT_GROUND = 1 << 2;
@@ -51,6 +52,7 @@ public class MysticGarden extends Game {
 
     private AssetManager assetManager;
     private AudioManager audioManager;
+    private MapManager mapManager;
     private Stage stage;
     private Skin skin;
     private I18NBundle i18NBundle;
@@ -89,12 +91,30 @@ public class MysticGarden extends Game {
         gameCamera = new OrthographicCamera();
         screenViewport = new FitViewport(9, 16, gameCamera);
 
+        // map
+        mapManager = new MapManager(this);
+
         // ecs engine
         ecsEngine = new ECSEngine(this);
 
         // set first screen
         screenCache = new EnumMap<>(ScreenType.class);
         setScreen(ScreenType.LOADING);
+    }
+
+    public static void resetBodiesAndFixtureDefinition() {
+        BODY_DEF.position.set(0, 0);
+        BODY_DEF.gravityScale = 1;
+        BODY_DEF.type = BodyDef.BodyType.StaticBody;
+        BODY_DEF.fixedRotation = false;
+
+        FIXTURE_DEF.density = 0;
+        FIXTURE_DEF.isSensor = false;
+        FIXTURE_DEF.restitution = 0;
+        FIXTURE_DEF.friction = 0.2f;
+        FIXTURE_DEF.filter.categoryBits = 0x0001;
+        FIXTURE_DEF.filter.maskBits = -1;
+        FIXTURE_DEF.shape = null;
     }
 
     private void initializeSkin() {
@@ -124,6 +144,10 @@ public class MysticGarden extends Game {
         assetManager.finishLoading();
         skin = assetManager.get("ui/hud.json", Skin.class);
         i18NBundle = assetManager.get("ui/strings", I18NBundle.class);
+    }
+
+    public MapManager getMapManager() {
+        return mapManager;
     }
 
     public ECSEngine getEcsEngine() {
