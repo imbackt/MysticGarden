@@ -24,6 +24,7 @@ import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.github.imbackt.mystic.audio.AudioManager;
 import com.github.imbackt.mystic.input.InputManager;
 import com.github.imbackt.mystic.screen.ScreenType;
 
@@ -48,6 +49,7 @@ public class MysticGarden extends Game {
     private float accumulator;
 
     private AssetManager assetManager;
+    private AudioManager audioManager;
     private Stage stage;
     private Skin skin;
     private I18NBundle i18NBundle;
@@ -72,6 +74,9 @@ public class MysticGarden extends Game {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(assetManager.getFileHandleResolver()));
         initializeSkin();
         stage = new Stage(new FitViewport(450, 800), spriteBatch);
+
+        // audio
+        audioManager = new AudioManager(this);
 
         // input
         inputManager = new InputManager();
@@ -112,6 +117,10 @@ public class MysticGarden extends Game {
         assetManager.finishLoading();
         skin = assetManager.get("ui/hud.json", Skin.class);
         i18NBundle = assetManager.get("ui/strings", I18NBundle.class);
+    }
+
+    public AudioManager getAudioManager() {
+        return audioManager;
     }
 
     public InputManager getInputManager() {

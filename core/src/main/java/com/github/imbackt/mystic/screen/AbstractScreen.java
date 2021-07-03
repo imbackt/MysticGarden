@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.github.imbackt.mystic.MysticGarden;
+import com.github.imbackt.mystic.audio.AudioManager;
 import com.github.imbackt.mystic.input.InputListener;
 import com.github.imbackt.mystic.input.InputManager;
 
@@ -19,6 +20,7 @@ public abstract class AbstractScreen<T extends Table> implements Screen, InputLi
     protected final Stage stage;
     protected final T screenUI;
     protected final InputManager inputManager;
+    protected final AudioManager audioManager;
 
     public AbstractScreen(MysticGarden context) {
         this.context = context;
@@ -26,6 +28,7 @@ public abstract class AbstractScreen<T extends Table> implements Screen, InputLi
         this.world = context.getWorld();
         this.box2DDebugRenderer = context.getBox2DDebugRenderer();
         this.inputManager = context.getInputManager();
+        this.audioManager = context.getAudioManager();
 
         stage = context.getStage();
         screenUI = getScreenUI(context);
