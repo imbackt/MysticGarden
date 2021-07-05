@@ -11,14 +11,18 @@ import com.github.imbackt.mystic.MysticGarden;
 import com.github.imbackt.mystic.ecs.component.AnimationComponent;
 import com.github.imbackt.mystic.ecs.component.Box2DComponent;
 import com.github.imbackt.mystic.ecs.component.PlayerComponent;
+import com.github.imbackt.mystic.ecs.system.AnimationSystem;
+import com.github.imbackt.mystic.ecs.system.PlayerAnimationSystem;
 import com.github.imbackt.mystic.ecs.system.PlayerCameraSystem;
 import com.github.imbackt.mystic.ecs.system.PlayerMovementSystem;
+import com.github.imbackt.mystic.view.AnimationType;
 
 import static com.github.imbackt.mystic.MysticGarden.*;
 
 public class ECSEngine extends PooledEngine {
     public static final ComponentMapper<PlayerComponent> playerCmpMapper = ComponentMapper.getFor(PlayerComponent.class);
     public static final ComponentMapper<Box2DComponent> box2DCmpMapper = ComponentMapper.getFor(Box2DComponent.class);
+    public static final ComponentMapper<AnimationComponent> aniCmpMapper = ComponentMapper.getFor(AnimationComponent.class);
 
     private final World world;
 
@@ -30,6 +34,8 @@ public class ECSEngine extends PooledEngine {
 
         this.addSystem(new PlayerMovementSystem(context));
         this.addSystem(new PlayerCameraSystem(context));
+        this.addSystem(new AnimationSystem(context));
+        this.addSystem(new PlayerAnimationSystem(context));
     }
 
     public void createPlayer(final Vector2 playerSpawnLocation, final float width, final float height) {
@@ -56,10 +62,14 @@ public class ECSEngine extends PooledEngine {
         FIXTURE_DEF.shape = pShape;
         box2DComponent.body.createFixture(FIXTURE_DEF);
         pShape.dispose();
-
         player.add(box2DComponent);
+
         final AnimationComponent animationComponent = this.createComponent(AnimationComponent.class);
+        animationComponent.animationType = AnimationType.HERO_MOVE_DOWN;
+        animationComponent.width = 64 * UNIT_SCALE * 0.75f;
+        animationComponent.height = 64 * UNIT_SCALE * 0.75f;
         player.add(animationComponent);
+
         this.addEntity(player);
     }
 }
